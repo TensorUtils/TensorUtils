@@ -31,6 +31,7 @@ If not, see <https://www.gnu.org/licenses/>.
 #include <set>
 #include <functional>
 #include <cstring>
+#include <iomanip>
 
 using namespace std;
 using namespace TensorUtils;
