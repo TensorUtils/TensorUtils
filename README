@@ -20,7 +20,9 @@ formats as well as element-wise operations with support for type conversions
 and chaining. The usage of this library might help to avoid memory leaks, 
 segmentation faults, nested loops as well as error-prone index conversions. 
 All methods are explicitly instantiated and stored in a shared library, which 
-minimizes the compile time of your source code.
+minimizes the compile time of your source code. Additionally, you will find
+routines to transpose, reshape and slice tensors as well as a generalized
+tensor product. 
 
 Supported types for the components are the follogwing:
 
