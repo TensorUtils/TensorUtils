@@ -135,6 +135,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af8bf80a09ab04dba6dad6f37f979d772"><td class="memTemplParams" colspan="2">template&lt;class T2 &gt; </td></tr>
 <tr class="memitem:af8bf80a09ab04dba6dad6f37f979d772"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classTensorUtils_1_1TensorBase.html">TensorBase</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classTensorUtils_1_1TensorBase.html#af8bf80a09ab04dba6dad6f37f979d772">dot</a> (<a class="el" href="classTensorUtils_1_1TensorBase.html">TensorBase</a>&lt; T2 &gt; &amp;rhs, const std::vector&lt; int &gt; &amp;idx_lhs, const std::vector&lt; int &gt; &amp;idx_rhs, const std::vector&lt; size_t &gt; &amp;idx_at={})</td></tr>
 <tr class="separator:af8bf80a09ab04dba6dad6f37f979d772"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaea73eab094bc56b73271bb6a6f11d7c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTensorUtils_1_1TensorBase.html">TensorBase</a>&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a> (const std::vector&lt; int &gt; &amp;idx_lhs, const std::vector&lt; size_t &gt; &amp;idx_at={})</td></tr>
+<tr class="separator:aaea73eab094bc56b73271bb6a6f11d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eed73b66bc0280587bf7b1b06ab3e1a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTensorUtils_1_1TensorBase.html">TensorBase</a>&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTensorUtils_1_1TensorBase.html#a2eed73b66bc0280587bf7b1b06ab3e1a">operator=</a> (const std::vector&lt; T &gt; &amp;rhs)</td></tr>
 <tr class="separator:a2eed73b66bc0280587bf7b1b06ab3e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a09696fdcb5d7cb23e213418097c6adf1"><td class="memTemplParams" colspan="2">template&lt;class T2 &gt; </td></tr>
@@ -628,6 +630,63 @@ template&lt;class T &gt; </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclassTensorUtils_1_1TensorDerived_html_a89af3f7f701efac744dad03237f096a6"><div class="ttname"><a href="classTensorUtils_1_1TensorDerived.html#a89af3f7f701efac744dad03237f096a6">TensorUtils::TensorDerived::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Inherits from TensorBase and resizes shape and incr with size N.</div></div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="aaea73eab094bc56b73271bb6a6f11d7c" name="aaea73eab094bc56b73271bb6a6f11d7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaea73eab094bc56b73271bb6a6f11d7c">&#9670;&nbsp;</a></span>contract()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classTensorUtils_1_1TensorBase.html">TensorBase</a>&lt; T &gt; <a class="el" href="classTensorUtils_1_1TensorBase.html">TensorUtils::TensorBase</a>&lt; T &gt;::contract </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; int &gt; &amp;&#160;</td>
+          <td class="paramname"><em>idx_lhs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; size_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>idx_at</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Sum over specified axes and return the remaining subtensor. Indices are represented by signed integers. The parameters <code>idx_lhs</code> enumerates the indices of this tensor. Indices represented by negative integers are summed over. The order of the return value can be set as desired and is given in increasing order of the resulting indices. Optionally, it is possible to compute only a sub-tensor of the final result by setting the parameter <code>idx_at</code>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">idx_lhs</td><td>Indices of first operand represented by signed integers. </td></tr>
+    <tr><td class="paramname">idx_at</td><td>Indices specifying the sub-tensor to be computed.</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;TensorUtils.hpp&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main()</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_class" href="classTensorUtils_1_1TensorDerived.html">TensorUtils::tensor&lt;double&gt;</a> X({3,3,5,5},1);</div>
+<div class="line">    <a class="code hl_class" href="classTensorUtils_1_1TensorDerived.html">TensorUtils::tensor&lt;double&gt;</a> Z;</div>
+<div class="line"> </div>
+<div class="line">    Z = X.<a class="code hl_function" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a>({-1,-2,-3,-4});   <span class="comment">// sum of all components!</span></div>
+<div class="line"> </div>
+<div class="line">    Z = X.<a class="code hl_function" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a>({1,2,-1,-1}); <span class="comment">// trace of all submatrices</span></div>
+<div class="line"> </div>
+<div class="line">    Z = X.<a class="code hl_function" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a>({2,1,-1,-1}); <span class="comment">// same but transposed</span></div>
+<div class="line"> </div>
+<div class="line">    Z = X.<a class="code hl_function" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a>({1,1,-1,-1}); <span class="comment">// main diagonal of the previous result</span></div>
+<div class="line"> </div>
+<div class="line">    Z = X.<a class="code hl_function" href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">contract</a>({1,2,-1,-1}, {0,0}); <span class="comment">// trace of first submatrix</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassTensorUtils_1_1TensorBase_html_aaea73eab094bc56b73271bb6a6f11d7c"><div class="ttname"><a href="classTensorUtils_1_1TensorBase.html#aaea73eab094bc56b73271bb6a6f11d7c">TensorUtils::TensorBase::contract</a></div><div class="ttdeci">TensorBase&lt; T &gt; contract(const std::vector&lt; int &gt; &amp;idx_lhs, const std::vector&lt; size_t &gt; &amp;idx_at={})</div></div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -2061,7 +2120,7 @@ template&lt;class T &gt; </div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
-<div class="ttc" id="aclassTensorUtils_1_1TensorBase_html_adb62602f86f3266f2344c69b15b1fe28"><div class="ttname"><a href="classTensorUtils_1_1TensorBase.html#adb62602f86f3266f2344c69b15b1fe28">TensorUtils::TensorBase::shape</a></div><div class="ttdeci">std::vector&lt; size_t &gt; shape</div><div class="ttdef"><b>Definition:</b> TensorBase.hpp:1067</div></div>
+<div class="ttc" id="aclassTensorUtils_1_1TensorBase_html_adb62602f86f3266f2344c69b15b1fe28"><div class="ttname"><a href="classTensorUtils_1_1TensorBase.html#adb62602f86f3266f2344c69b15b1fe28">TensorUtils::TensorBase::shape</a></div><div class="ttdeci">std::vector&lt; size_t &gt; shape</div><div class="ttdef"><b>Definition:</b> TensorBase.hpp:1101</div></div>
 </div><!-- fragment --> 
 </div>
 </div>

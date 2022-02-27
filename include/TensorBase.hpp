@@ -470,6 +470,40 @@ namespace TensorUtils
                 const std::vector<size_t>   &idx_at={});
 
             /*!
+                Sum over specified axes and return the remaining subtensor.
+                Indices are represented by signed integers.
+                The parameters \p idx_lhs enumerates the indices of this tensor.
+                Indices represented by negative integers are summed over.
+                The order of the return value can be set as desired and is given in increasing order of the resulting indices.
+                Optionally, it is possible to compute only a sub-tensor of the final result by setting the parameter \p idx_at.
+                \param idx_lhs Indices of first operand represented by signed integers.
+                \param idx_at  Indices specifying the sub-tensor to be computed.
+
+                \code
+                #include "TensorUtils.hpp"
+
+                int main()
+                {
+                    TensorUtils::tensor<double> X({3,3,5,5},1);
+                    TensorUtils::tensor<double> Z;
+
+                    Z = X.contract({-1,-2,-3,-4});   // sum of all components!
+
+                    Z = X.contract({1,2,-1,-1}); // trace of all submatrices
+
+                    Z = X.contract({2,1,-1,-1}); // same but transposed
+
+                    Z = X.contract({1,1,-1,-1}); // main diagonal of the previous result
+
+                    Z = X.contract({1,2,-1,-1}, {0,0}); // trace of first submatrix
+
+                    return 0;
+                }
+                \endcode
+            */
+            TensorBase<T> contract(const std::vector<int> &idx_lhs, const std::vector<size_t> &idx_at={});
+
+            /*!
                 Assigns the components in lexicographical order from a vector.
                 \code
                 #include "TensorUtils.hpp"

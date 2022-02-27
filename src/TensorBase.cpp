@@ -988,6 +988,281 @@ TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, 
     return result;
 }
 
+template<class T>
+TensorBase<T> TensorBase<T>::contract(const vector<int> &idx_lhs, const vector<size_t> &idx_at)
+{
+    if(true && THROW_EXCEPTIONS && shape.size()!=idx_lhs.size() )
+    {
+        throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
+    }
+
+    // get final and contraction indices
+    set<int> idx_contr;
+    set<int> idx_final;
+    for(auto it=idx_lhs.begin(); it!=idx_lhs.end(); it++)
+    {
+        if(*it<0)
+        {
+            idx_contr.insert(*it);
+        }
+        else
+        {
+            idx_final.insert(*it);
+        }
+    }
+
+    // get idx_contr positions
+    vector<vector<unsigned>> contr_pos(idx_contr.size());
+    auto iter = contr_pos.begin();
+    for(auto it=idx_contr.begin();it!=idx_contr.end(); it++)
+    {
+        for(unsigned n=0; n<idx_lhs.size(); n++)
+        {
+            if(*it == idx_lhs[n] )
+            {
+                (*iter).push_back(n);
+            }
+        }
+        iter++;
+    }
+
+    // get idx_final positions
+    vector<vector<unsigned>> final_pos(idx_final.size());
+    iter = final_pos.begin();
+    for(auto it=idx_final.begin();it!=idx_final.end(); it++)
+    {
+        for(unsigned n=0; n<idx_lhs.size(); n++)
+        {
+            if(*it == idx_lhs[n] )
+            {
+                (*iter).push_back(n);
+            }
+        }
+        iter++;
+    }
+
+    // get final shape
+    vector<size_t> shape_final;
+    for(auto it=final_pos.begin(); it!=final_pos.end(); it++)
+    {
+        size_t shape_0 = shape[ (*it)[0] ];
+        if(true && THROW_EXCEPTIONS)
+        {
+            for(auto it2 = it->begin(); it2!=it->end(); it2++)
+            {
+                if(shape_0 != shape[ *it2 ])
+                {
+                    throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
+                }
+            }
+        }
+        shape_final.push_back(shape_0);
+    }
+    // get contraction shape
+    vector<size_t> shape_contr;
+    for(auto it=contr_pos.begin(); it!=contr_pos.end(); it++)
+    {
+        size_t shape_0 = shape[ (*it)[0] ];
+        if(true && THROW_EXCEPTIONS)
+        {
+            for(auto it2 = it->begin(); it2!=it->end(); it2++)
+            {
+                if(shape_0 != shape[ *it2 ])
+                {
+                    throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
+                }
+            }
+        }
+        shape_contr.push_back(shape_0);
+    }
+
+    if(true && THROW_EXCEPTIONS && idx_at.size()>shape_final.size())
+    {
+        throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
+    }
+
+    // result, indices and pointer to be captured by lambda functions
+    vector<size_t> index_final(shape_final.size());
+    vector<size_t> index_contr(shape_contr.size());
+    vector<size_t*> idx_ptr(shape.size());
+    const unsigned dim_max = shape_final.size()-1;
+
+    // set pointer to indices
+    iter = final_pos.begin();
+    for(auto it=index_final.begin(); it!=index_final.end(); it++ )
+    {
+        for(auto it2=iter->begin();it2!=iter->end();it2++)
+        {
+            idx_ptr[*it2]=&(*it);
+        }
+        iter++;
+    }
+    iter = contr_pos.begin();
+    for(auto it=index_contr.begin(); it!=index_contr.end(); it++ )
+    {
+        for(auto it2=iter->begin();it2!=iter->end();it2++)
+        {
+            idx_ptr[*it2]=&(*it);
+        }
+        iter++;
+    }
+
+    shape_final.erase(shape_final.begin(), shape_final.begin()+idx_at.size());
+    TensorBase<T> result(shape_final); // to be capured
+
+    function<void(unsigned, T&)> iterate_contr = [&](unsigned dim, T &buff)
+    {
+        index_contr[dim] = 0;
+        while(index_contr[dim]<shape_contr[dim])
+        {
+            if( dim == shape_contr.size()-1 )
+            {
+                buff += (*this)(idx_ptr);
+            }
+            else
+            {
+                iterate_contr(dim+1,buff);
+            }
+            index_contr[dim]++;
+        }
+    };
+
+    if(idx_at.empty())
+    {
+        function<void(unsigned)> iterate = [&](unsigned dim)
+        {
+            index_final[dim] = 0;
+            while(index_final[dim]<shape_final[dim])
+            {
+                if( dim == dim_max )
+                {
+                    result(index_final) = 0.0;
+                    iterate_contr(0,result(index_final));
+                }
+                else
+                {
+                    iterate(dim+1);
+                }
+                index_final[dim]++;
+            }
+        };
+        function<void(unsigned)> iterate_no_contr = [&](unsigned dim)
+        {
+            index_final[dim] = 0;
+            while(index_final[dim]<shape_final[dim])
+            {
+                if( dim == dim_max )
+                {
+                    result(index_final) = (*this)(idx_ptr);
+                }
+                else
+                {
+                    iterate_no_contr(dim+1);
+                }
+                index_final[dim]++;
+            }
+        };
+        // sum over all final and contraction indices
+        if(shape_contr.empty())
+        {
+            if(shape_final.empty()) // return value and arguments are scalars!
+            {
+                result[0]=(*this)[0];
+            }
+            else // return value is not a scalar and there are no indices to contract!
+            {
+                iterate_no_contr(0);
+            }
+        }
+        else if(shape_final.empty()) // return value is a scalar!
+        {
+            result[0] = 0.0;
+            iterate_contr(0,result[0]);
+        }
+        else // return value is not a scalar and there are indices to contract!
+        {
+            iterate(0);
+        }
+    }
+    else
+    {
+        vector<size_t*> index_final_ptr(index_final.size());
+        // set index_final for idx_at
+        auto iter_final = index_final.begin();
+        for(auto it=idx_at.begin(); it!=idx_at.end(); it++)
+        {
+            *iter_final = *it;
+            iter_final++;
+        }
+        // set index_final_ptr
+        auto iter_final_ptr = index_final_ptr.begin();
+        for(auto it=index_final.begin(); it!=index_final.end(); it++)
+        {
+            *iter_final_ptr = &(*it);
+            iter_final_ptr++;
+        }
+        // drop indices given by idx_at
+        index_final_ptr.erase(index_final_ptr.begin(), index_final_ptr.begin()+idx_at.size());
+
+        function<void(unsigned)> iterate = [&](unsigned dim)
+        {
+            *index_final_ptr[dim] = 0;
+            while(*index_final_ptr[dim]<shape_final[dim])
+            {
+                if( dim == dim_max )
+                {
+                    result(index_final_ptr) = 0.0;
+                    iterate_contr(0,result(index_final_ptr));
+                }
+                else
+                {
+                    iterate(dim+1);
+                }
+                (*index_final_ptr[dim])++;
+            }
+        };
+        function<void(unsigned)> iterate_no_contr = [&](unsigned dim)
+        {
+            *index_final_ptr[dim] = 0;
+            while(*index_final_ptr[dim]<shape_final[dim])
+            {
+                if( dim == dim_max )
+                {
+                    result(index_final_ptr) = (*this)(idx_ptr) ;
+                }
+                else
+                {
+                    iterate_no_contr(dim+1);
+                }
+                (*index_final_ptr[dim])++;
+            }
+        };
+        // sum over all final and contraction indices
+        if(shape_contr.empty())
+        {
+            if(shape_final.empty()) // return value is a scalars!
+            {
+                result[0]=(*this)(idx_ptr);
+            }
+            else // return value is not a scalar and there are no indices to contract!
+            {
+                iterate_no_contr(0);
+            }
+        }
+        else if(shape_final.empty()) // return value is a scalar!
+        {
+            result[0] = 0.0;
+            iterate_contr(0,result[0]);
+        }
+        else // return value is not a scalar and there are indices to contract!
+        {
+            iterate(0);
+        }
+    }
+
+    return result;
+}
+
 /**
     OPERATORS
 **/
