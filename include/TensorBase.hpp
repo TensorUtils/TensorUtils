@@ -1,22 +1,23 @@
-/*
-TensorUtils Version 0.1
+/**
+\internal
+    TensorUtils Version 0.1
 
-Copyright 2022 Christoph Widder
+    Copyright 2022 Christoph Widder
 
-This file is part of TensorUtils.
+    This file is part of TensorUtils.
 
-TensorUtils is free software: you can redistribute it and/or modify it under the terms of
-the GNU General Public License as published by the Free Software Foundation, either
-version 3 of the License, or (at your option) any later version.
+    TensorUtils is free software: you can redistribute it and/or modify it under the terms of
+    the GNU General Public License as published by the Free Software Foundation, either
+    version 3 of the License, or (at your option) any later version.
 
-TensorUtils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE. See the GNU General Public License for more details.
+    TensorUtils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+    PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with TensorUtils.
-If not, see <https://www.gnu.org/licenses/>.
-
-*/
+    You should have received a copy of the GNU General Public License along with TensorUtils.
+    If not, see <https://www.gnu.org/licenses/>.
+\endinternal
+**/
 
 #ifndef TENSORBASE_HPP
 #define TENSORBASE_HPP
@@ -29,249 +30,6 @@ namespace TensorUtils
     /*!
         \brief This is the main class of this project.
         It inherits from std::vector<T> and adds methods to make it a tensor.
-
-        \code
-        #include "TensorUtils.hpp"
-        #include <iostream>
-
-        using namespace std;
-        using namespace TensorUtils;
-        using namespace ErrorHandler;
-
-        void write_test_data()
-        {
-            tensor<long double> A;
-            A.alloc({2,3,5,7});
-            A.arange();
-            try{
-                A.write("A.txt", ".");
-                A.write("A.f32", ".");
-                A.write("A.f64", ".");
-                A.write("A.f80", ".");
-                A.write("A.uc", ".");
-                A.write("A.sc", ".");
-                A.write("A.us", ".");
-                A.write("A.s", ".");
-                A.write("A.u", ".");
-                A.write("A.int", ".");
-                A.write("A.ul", ".");
-                A.write("A.l", ".");
-                A.write("A.ull", ".");
-                A.write("A.ll", ".");
-            } catch(exception &ex){cout<<ex.what()<<endl;}
-        }
-
-        int main()
-        {
-            write_test_data();
-
-            // CONSTRUCT, ALLOCATE AND INITIALIZE
-
-            tensor<long double> A;
-            tensor<double> B({2,3,5,7});
-            tensor<float> C(B.shape, 1.0f);
-
-            A.alloc(B.shape);
-            A.alloc(B.shape, 2.0L);
-
-            B.init(3.0);
-
-            A=B=C;      // OK! Short for: B=C; A=B;
-
-            A = vector<long double>(A.size(), 1.0L); // initialize from a vector
-
-            if( A == vector<long double>(A.size(), 1.0L)) // bit-wise comparison
-            {
-                //
-            }
-
-            A.arange(); // initialize with 0,1,2,3,... in lexicographical order.
-
-            long double raw_data[A.size()];
-            A >> raw_data[0]; // copy data to array
-            A << raw_data[0]; // initialize from array
-
-            long double multi_array[2][3][5][7];
-            A >> multi_array[0][0][0][0]; // copy data to multi-dimensional array
-            A << multi_array[0][0][0][0]; // initialize from multi-dimensional array
-
-            A.print();
-            if(!A.empty())
-            {
-                A.clear();
-            }
-
-            //  READ AND WRITE
-
-            A.read("A.txt");    // text file
-            A.read("./A.f32");  // binary: float
-            A.read("./A.f64");  // binary: double
-            A.read("./A.f80");  // binary: long double
-
-            A.write("A.txt", "./");     // text file. If floating point type: write std::numeric_limits<T> significant digits
-            A.write("A.txt", "./", 10); // text file. If floating point type: write 10 significant digits
-            A.write("A.f32", ".");      // binary: float
-            A.write("A.f64", ".");      // binary: double
-            A.write("A.f80", ".");      // binary: long double
-
-
-            //  OPERATORS:
-            //      Make sure the dimensions match! There is no error-handling due to better performance!
-            //      Shape mismatches might lead to segmentation faults!
-
-            B += B;
-            B -= B;
-            B = B+B;
-            B = B-B;
-            B *= 2.0;
-            B /= 2.0;     // use *= instead for best performance!
-            B = 2.0*B;
-            B = B*2.0;
-            B = B/2.0;    // use * instead for best performance!
-
-            if(A.shape == B.shape && B.shape == C.shape)
-            {
-                // Operators will use implicit type conversion of components if necessary:
-                A += B;
-                A -= B;
-                A = B-C;
-                A = B+C;
-                A = 2*A + 2*( (1.0/3)*B - C );
-                C = (-2.0/3)*( 3*C - B ) + 2*A; // same but faster (operators return tensors of the smaller type)
-            }
-            else
-            {
-                throw ShapeMismatch("Shape mismatch!");
-            }
-
-            // ACCESS ELEMENTS
-
-            int elem = 0;
-            for(size_t n0=0; n0<A.shape[0]; n0++)
-            {
-                for(size_t n1=0; n1<A.shape[1]; n1++)
-                {
-                    for(size_t n2=0; n2<A.shape[2]; n2++)
-                    {
-                        for(size_t n3=0; n3<A.shape[3]; n3++)
-                        {
-                            A(n0,n1,n2,n3) = elem;
-                            elem++;
-                        }
-                    }
-                }
-            }
-
-            elem=0;
-            for(auto it=A.begin(); it!=A.end(); it++)
-            {
-                *it = elem;
-                elem++;
-            }
-
-            // SUBTENSORS
-
-            tensor<int> G({6,2,3,5,7});
-            A.alloc({2,3,5,7}, 1.0);
-            G.arange();
-
-            A.assign(G,{0},{1,1});
-            A.add(G, {}, {4});
-            A.substract(G, {}, {4});
-            A.multiply(2.0, {});
-            A.divide(0.5, {});
-            A = A.plus(G,{},{1});
-            A = A.minus(G,{},{1});
-            A = A.product(2.0,{0,0});
-            A = G.slice({1,1});
-            A = A.quotient(2.0,{1,2});
-
-            //  TRANSPOSE AND RESHAPE
-
-            tensor<float> H({2,3,5,7},0);
-            H.arange();
-            H = H.transpose({3,1,2,0});
-            H.reshape({7*3,5*2});
-
-            //  GENERALIZED TENSOR PRODUCT: X = X.dot( Y, {j_1,...,j_N}, {k_1,...,k_M} );
-
-            tensor<double> X({2,3,5,7},1);
-            tensor<double> Y({2,3,5,7},2);
-            tensor<double> Z;
-
-            Z = X.dot(Y,{-1,-2,-3,-4},{-1,-2,-3,-4});   // full contraction: Z is a scalar!
-
-            Z = X.dot(Y,{1,2,3,4},{1,2,3,4});       // Hadamard product: Z has shape {2,3,5,7}
-
-            Z = X.dot(Y,{1,2,3,4},{8,7,6,5});       // tensor product: Z has shape {2,3,5,7,7,5,3,2}
-
-            Z = X.dot(Y,{1,2,3,4},{5,6,7,8}, {1,2,4,6}); // compute sub-tensor of tensor-product
-
-            X.alloc({2,3,7,7},1);
-            Y.alloc({7,5,3,11},2);
-
-            Z = X.dot(Y,{3,2,-5,-5},{-5,4,2,1});   // generalized tensor product: Z has shape {11,3,2,5}
-
-            //  TENSORS WITH FIXED RANK AND DISTINGUISHABLE TYPES:
-            //      In many situations you might want to keep the types of tensors with different rank distinguishable,
-            //      i.e. to overload functions that depend on the rank of its arguments.
-            //      Everything works exactly the same, but tensors have fixed ranks!
-            //      Fixed rank tensors have the type tensorN<T,N> and inherit from TensorBase<T>.
-
-            tensor<double> E({2,3,5},1);
-            tensor<float,4> F({2,3,5,7},0); // tensor with fixed rank 4
-            try
-            {
-                F = E;              // throws
-                F.alloc({2,3,5});   // throws
-                F.alloc({2,3,5},0);  // throws
-                tensor<long double,4> G({2,3,5});   // throws
-                tensor<long double,4> H({2,3,5},0); // throws
-            }
-            catch(RankMismatch &ex)
-            {
-                //
-            }
-            E = F; // OK!
-
-            //  ERROR HANDLING (see TensorUtils::ErrorHandling for more)
-            //      Most error handling is enabled only for the debug-library libtensorutilsd.so
-            //      This will enable you to trace down any occurrence of invalid indices or shape mismatches.
-
-            try
-            {
-                A(1,2,3,5);
-            }
-            catch(ShapeMismatch &ex)// wrong number of indices
-            {
-                cout << ex.what() << endl;
-            }
-            catch(out_of_range &ex) // at least one index is out of range
-            {
-                cout << ex.what() << endl;
-            }
-
-            try
-            {
-                A.read("./A.txt");
-                A.read("./A.f32");
-            }
-            catch(UnableToOpenFile & ex) // probably the required file does not exist
-            {
-                throw ex;
-            }
-            catch(ShapeMismatch & ex)   // shape does not match data: corrupted file?
-            {
-                throw ex;
-            }
-            catch(exception & ex) // catch any other exception
-            {
-                throw ex;
-            }
-
-            return 0;
-        }
-        \endcode
     */
     template<class T>
     class TensorBase : public std::vector<T>
@@ -1343,5 +1101,6 @@ namespace TensorUtils
             template<class BUFFER_TYPE> void write_txt(std::string oname, std::string folder, int precision);
     };
 }
+
 
 #endif // TENSORBASE_HPP
