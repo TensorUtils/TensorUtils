@@ -22,6 +22,10 @@ If not, see <https://www.gnu.org/licenses/>.
 #define THROW_EXCEPTIONS 0
 #endif // THROW_EXCEPTIONS
 
+#ifndef THROW_BASIC_EXCEPTIONS
+#define THROW_BASIC_EXCEPTIONS 1
+#endif // THROW_BASIC_EXCEPTIONS
+
 #include "TensorBase.hpp"
 #include "ErrorHandler.hpp"
 
@@ -545,7 +549,7 @@ void TensorBase<T>::write_bin(string oname, string folder)
 template<class T>
 TensorBase<T> TensorBase<T>::transpose(const vector<unsigned> &axes)
 {
-    if(true && THROW_EXCEPTIONS)
+    if(THROW_BASIC_EXCEPTIONS)
     {
         set<unsigned> set1;
         for(unsigned n=0; n<shape.size(); n++)
@@ -600,7 +604,7 @@ TensorBase<T> TensorBase<T>::transpose(const vector<unsigned> &axes)
 template<class T>
 TensorBase<T> TensorBase<T>::slice(const std::vector<size_t> &idx_at)
 {
-    if(true && THROW_EXCEPTIONS && idx_at.size()>= shape.size())
+    if(THROW_BASIC_EXCEPTIONS && idx_at.size()>= shape.size())
     {
         throw ShapeMismatch("TensorBase<T>::slice(const std::vector<unsigned>&):: Too many indices!");
     }
@@ -616,7 +620,7 @@ TensorBase<T>& TensorBase<T>::reshape(const std::vector<size_t> &shape)
 {
     if(shape.empty())
     {
-        if(true && THROW_EXCEPTIONS && 1 != vector<T>::size())
+        if(THROW_BASIC_EXCEPTIONS && 1 != vector<T>::size())
         {
             throw ShapeMismatch("TensorBase<T>::reshape(const std::vector<size_t> &shape):: Shape does not match the number of components!");
         }
@@ -638,7 +642,7 @@ TensorBase<T>& TensorBase<T>::reshape(const std::vector<size_t> &shape)
             num_elems *= shape[dim+1];
         }
         num_elems *= shape.front();
-        if(true && THROW_EXCEPTIONS && num_elems != vector<T>::size())
+        if(THROW_BASIC_EXCEPTIONS && num_elems != vector<T>::size())
         {
             throw ShapeMismatch("TensorBase<T>::reshape(const std::vector<size_t> &shape):: Shape does not match the number of components!");
         }
@@ -650,7 +654,7 @@ template<class T>
 template<class T2>
 TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, const vector<int> &idx_rhs, const vector<size_t> &idx_at)
 {
-    if(true && THROW_EXCEPTIONS && (shape.size()!=idx_lhs.size() || B.shape.size()!= idx_rhs.size()))
+    if(THROW_BASIC_EXCEPTIONS && (shape.size()!=idx_lhs.size() || B.shape.size()!= idx_rhs.size()))
     {
         throw ShapeMismatch("TensorUtils::TensorBase<T>::dot:: Shape mismatch!");
     }
@@ -758,7 +762,7 @@ TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, 
     for(auto it=final_pos.begin(); it!=final_pos.end(); it++)
     {
         size_t shape_0 = shape_all[ (*it)[0] ];
-        if(true && THROW_EXCEPTIONS)
+        if(THROW_BASIC_EXCEPTIONS)
         {
             for(auto it2 = it->begin(); it2!=it->end(); it2++)
             {
@@ -775,7 +779,7 @@ TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, 
     for(auto it=contr_pos.begin(); it!=contr_pos.end(); it++)
     {
         size_t shape_0 = shape_all[ (*it)[0] ];
-        if(true && THROW_EXCEPTIONS)
+        if(THROW_BASIC_EXCEPTIONS)
         {
             for(auto it2 = it->begin(); it2!=it->end(); it2++)
             {
@@ -788,7 +792,7 @@ TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, 
         shape_contr.push_back(shape_0);
     }
 
-    if(true && THROW_EXCEPTIONS && idx_at.size()>shape_final.size())
+    if(THROW_BASIC_EXCEPTIONS && idx_at.size()>shape_final.size())
     {
         throw ShapeMismatch("TensorUtils::TensorBase<T>::dot:: Shape mismatch!");
     }
@@ -991,7 +995,7 @@ TensorBase<T> TensorBase<T>::dot(TensorBase<T2>& B, const vector<int> &idx_lhs, 
 template<class T>
 TensorBase<T> TensorBase<T>::contract(const vector<int> &idx_lhs, const vector<size_t> &idx_at)
 {
-    if(true && THROW_EXCEPTIONS && shape.size()!=idx_lhs.size() )
+    if(THROW_BASIC_EXCEPTIONS && shape.size()!=idx_lhs.size() )
     {
         throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
     }
@@ -1046,7 +1050,7 @@ TensorBase<T> TensorBase<T>::contract(const vector<int> &idx_lhs, const vector<s
     for(auto it=final_pos.begin(); it!=final_pos.end(); it++)
     {
         size_t shape_0 = shape[ (*it)[0] ];
-        if(true && THROW_EXCEPTIONS)
+        if(THROW_BASIC_EXCEPTIONS)
         {
             for(auto it2 = it->begin(); it2!=it->end(); it2++)
             {
@@ -1063,7 +1067,7 @@ TensorBase<T> TensorBase<T>::contract(const vector<int> &idx_lhs, const vector<s
     for(auto it=contr_pos.begin(); it!=contr_pos.end(); it++)
     {
         size_t shape_0 = shape[ (*it)[0] ];
-        if(true && THROW_EXCEPTIONS)
+        if(THROW_BASIC_EXCEPTIONS)
         {
             for(auto it2 = it->begin(); it2!=it->end(); it2++)
             {
@@ -1076,7 +1080,7 @@ TensorBase<T> TensorBase<T>::contract(const vector<int> &idx_lhs, const vector<s
         shape_contr.push_back(shape_0);
     }
 
-    if(true && THROW_EXCEPTIONS && idx_at.size()>shape_final.size())
+    if(THROW_BASIC_EXCEPTIONS && idx_at.size()>shape_final.size())
     {
         throw ShapeMismatch("TensorUtils::TensorBase<T>::contract:: Shape mismatch!");
     }
@@ -1898,73 +1902,76 @@ T& TensorBase<T>::operator()(size_t n0, size_t n1, size_t n2, size_t n3, size_t 
     EXPLICIT TEMPLATE INSTANTIATION
 **/
 
-#define INSTANTIATE_FUNCTION_TEMPLATES(X,Y) \
-template TensorBase<X>& TensorBase<X>::operator=<Y>(const TensorBase<Y>&); \
-template TensorBase<X>& TensorBase<X>::operator+=<Y>(const TensorBase<Y>&); \
-template TensorBase<X>& TensorBase<X>::operator-=<Y>(const TensorBase<Y>&); \
-template TensorBase<X> TensorBase<X>::operator+<Y>(const TensorBase<Y>&); \
-template TensorBase<X> TensorBase<X>::operator-<Y>(const TensorBase<Y>&); \
-template TensorBase<X>& TensorBase<X>::operator<<<Y>(Y& rhs); \
-template Y& TensorBase<X>::operator>><Y>(Y& rhs); \
-template TensorBase<X>& TensorBase<X>::assign(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
-template TensorBase<X>& TensorBase<X>::add(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
-template TensorBase<X>& TensorBase<X>::substract(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
-template TensorBase<X> TensorBase<X>::plus(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
-template TensorBase<X> TensorBase<X>::minus(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
-template TensorBase<X> TensorBase<X>::dot(TensorBase<Y>&, const vector<int>&, const vector<int>&, const vector<size_t>&); \
-template void TensorBase<X>::write_bin<Y>(string, string); \
-template void TensorBase<X>::print_helper<Y>(); \
-template void TensorBase<X>::read_txt<Y>(string path); \
-template void TensorBase<X>::read_bin<Y>(string path); \
-template void TensorBase<X>::write_txt<Y>(string, string, int); \
+namespace TensorUtils
+{
+    #define INSTANTIATE_FUNCTION_TEMPLATES(X,Y) \
+    template TensorBase<X>& TensorBase<X>::operator=<Y>(const TensorBase<Y>&); \
+    template TensorBase<X>& TensorBase<X>::operator+=<Y>(const TensorBase<Y>&); \
+    template TensorBase<X>& TensorBase<X>::operator-=<Y>(const TensorBase<Y>&); \
+    template TensorBase<X> TensorBase<X>::operator+<Y>(const TensorBase<Y>&); \
+    template TensorBase<X> TensorBase<X>::operator-<Y>(const TensorBase<Y>&); \
+    template TensorBase<X>& TensorBase<X>::operator<<<Y>(Y& rhs); \
+    template Y& TensorBase<X>::operator>><Y>(Y& rhs); \
+    template TensorBase<X>& TensorBase<X>::assign(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
+    template TensorBase<X>& TensorBase<X>::add(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
+    template TensorBase<X>& TensorBase<X>::substract(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
+    template TensorBase<X> TensorBase<X>::plus(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
+    template TensorBase<X> TensorBase<X>::minus(TensorBase<Y> &rhs, const vector<size_t> &at_lhs, const vector<size_t> &at_rhs); \
+    template TensorBase<X> TensorBase<X>::dot(TensorBase<Y>&, const vector<int>&, const vector<int>&, const vector<size_t>&); \
+    template void TensorBase<X>::write_bin<Y>(string, string); \
+    template void TensorBase<X>::print_helper<Y>(); \
+    template void TensorBase<X>::read_txt<Y>(string path); \
+    template void TensorBase<X>::read_bin<Y>(string path); \
+    template void TensorBase<X>::write_txt<Y>(string, string, int); \
 
-#define INSTANTIATE_ALL(X) \
-template class TensorBase<X>; \
-INSTANTIATE_FUNCTION_TEMPLATES(X,double) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,float) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,long double) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned char) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,signed char) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned short) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,short) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,int) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned long) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,long) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned long long) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,long long) \
+    #define INSTANTIATE_ALL(X) \
+    template class TensorBase<X>; \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,double) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,float) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,long double) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned char) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,signed char) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned short) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,short) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,int) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned long) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,long) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,unsigned long long) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,long long) \
 
-#define INSTANTIATE_FLOATING_POINT_TYPES(X) \
-template class TensorBase<X>; \
-INSTANTIATE_FUNCTION_TEMPLATES(X,double) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,float) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,long double)
+    #define INSTANTIATE_FLOATING_POINT_TYPES(X) \
+    template class TensorBase<X>; \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,double) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,float) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,long double)
 
-#ifndef ENABLE_INTEGRAL_TYPES
-#define ENABLE_INTEGRAL_TYPES 1
-#endif // ENABLE_INTEGRAL_TYPES
+    #ifndef ENABLE_INTEGRAL_TYPES
+    #define ENABLE_INTEGRAL_TYPES 1
+    #endif // ENABLE_INTEGRAL_TYPES
 
-#if ENABLE_INTEGRAL_TYPES == 1
-    INSTANTIATE_ALL(double)
-    INSTANTIATE_ALL(float)
-    INSTANTIATE_ALL(long double)
-    INSTANTIATE_ALL(unsigned char)
-    INSTANTIATE_ALL(signed char)
-    INSTANTIATE_ALL(unsigned short)
-    INSTANTIATE_ALL(short)
-    INSTANTIATE_ALL(unsigned)
-    INSTANTIATE_ALL(int)
-    INSTANTIATE_ALL(unsigned long)
-    INSTANTIATE_ALL(long)
-    INSTANTIATE_ALL(unsigned long long)
-    INSTANTIATE_ALL(long long)
-#else
-    INSTANTIATE_FLOATING_POINT_TYPES(double)
-    INSTANTIATE_FLOATING_POINT_TYPES(float)
-    INSTANTIATE_FLOATING_POINT_TYPES(long double)
-#endif
+    #if ENABLE_INTEGRAL_TYPES == 1
+        INSTANTIATE_ALL(double)
+        INSTANTIATE_ALL(float)
+        INSTANTIATE_ALL(long double)
+        INSTANTIATE_ALL(unsigned char)
+        INSTANTIATE_ALL(signed char)
+        INSTANTIATE_ALL(unsigned short)
+        INSTANTIATE_ALL(short)
+        INSTANTIATE_ALL(unsigned)
+        INSTANTIATE_ALL(int)
+        INSTANTIATE_ALL(unsigned long)
+        INSTANTIATE_ALL(long)
+        INSTANTIATE_ALL(unsigned long long)
+        INSTANTIATE_ALL(long long)
+    #else
+        INSTANTIATE_FLOATING_POINT_TYPES(double)
+        INSTANTIATE_FLOATING_POINT_TYPES(float)
+        INSTANTIATE_FLOATING_POINT_TYPES(long double)
+    #endif
 
-#undef INSTANTIATE_ALL
-#undef INSTANTIATE_FLOATING_POINT_TYPES
-#undef INSTANTIATE_FUNCTION_TEMPLATES
+    #undef INSTANTIATE_ALL
+    #undef INSTANTIATE_FLOATING_POINT_TYPES
+    #undef INSTANTIATE_FUNCTION_TEMPLATES
+}
 

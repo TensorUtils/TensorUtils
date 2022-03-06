@@ -12,9 +12,9 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Og" />
 					<Add option="-g" />
 					<Add option="-DTHROW_EXCEPTIONS=1" />
-					<Add option="-DTHROW_WARNINGS=1" />
 				</Compiler>
 			</Target>
 			<Target title="Release">

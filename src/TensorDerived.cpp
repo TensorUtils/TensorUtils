@@ -117,59 +117,62 @@ TensorDerived<T,-1>& TensorDerived<T,-1>::operator=(const std::vector<T> &rhs)
     EXPLICIT TEMPLATE INSTANTIATION
 **/
 
-#define INSTANTIATE_FUNCTION_TEMPLATES(X,Y,N) \
-template TensorDerived<X,N>& TensorDerived<X,N>::operator=<Y>(const TensorBase<Y> &rhs); \
+namespace TensorUtils
+{
+    #define INSTANTIATE_FUNCTION_TEMPLATES(X,Y,N) \
+    template TensorDerived<X,N>& TensorDerived<X,N>::operator=<Y>(const TensorBase<Y> &rhs); \
 
-#define INSTANTIATE_FUNCTION_TEMPLATES1(X,Y) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,-1) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,0) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,1) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,2) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,3) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,4) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,5) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,6) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,7) \
-INSTANTIATE_FUNCTION_TEMPLATES(X,Y,8) \
+    #define INSTANTIATE_FUNCTION_TEMPLATES1(X,Y) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,-1) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,0) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,1) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,2) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,3) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,4) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,5) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,6) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,7) \
+    INSTANTIATE_FUNCTION_TEMPLATES(X,Y,8) \
 
-#define INSTANTIATE(X) \
-template class TensorDerived<X,-1>; \
-template class TensorDerived<X,0>; \
-template class TensorDerived<X,1>; \
-template class TensorDerived<X,2>; \
-template class TensorDerived<X,3>; \
-template class TensorDerived<X,4>; \
-template class TensorDerived<X,5>; \
-template class TensorDerived<X,6>; \
-template class TensorDerived<X,7>; \
-template class TensorDerived<X,8>; \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,double) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,float) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,long double) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned char) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,signed char) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned short) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,short) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,int) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned long) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,long) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned long long) \
-INSTANTIATE_FUNCTION_TEMPLATES1(X,long long) \
+    #define INSTANTIATE(X) \
+    template class TensorDerived<X,-1>; \
+    template class TensorDerived<X,0>; \
+    template class TensorDerived<X,1>; \
+    template class TensorDerived<X,2>; \
+    template class TensorDerived<X,3>; \
+    template class TensorDerived<X,4>; \
+    template class TensorDerived<X,5>; \
+    template class TensorDerived<X,6>; \
+    template class TensorDerived<X,7>; \
+    template class TensorDerived<X,8>; \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,double) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,float) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,long double) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned char) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,signed char) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned short) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,short) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,int) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned long) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,long) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned long long) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,long long) \
 
-INSTANTIATE(double)
-INSTANTIATE(float)
-INSTANTIATE(long double)
-INSTANTIATE(unsigned char)
-INSTANTIATE(signed char)
-INSTANTIATE(unsigned short)
-INSTANTIATE(short)
-INSTANTIATE(unsigned)
-INSTANTIATE(int)
-INSTANTIATE(unsigned long)
-INSTANTIATE(long)
-INSTANTIATE(unsigned long long)
-INSTANTIATE(long long)
+    INSTANTIATE(double)
+    INSTANTIATE(float)
+    INSTANTIATE(long double)
+    INSTANTIATE(unsigned char)
+    INSTANTIATE(signed char)
+    INSTANTIATE(unsigned short)
+    INSTANTIATE(short)
+    INSTANTIATE(unsigned)
+    INSTANTIATE(int)
+    INSTANTIATE(unsigned long)
+    INSTANTIATE(long)
+    INSTANTIATE(unsigned long long)
+    INSTANTIATE(long long)
 
-#undef INSTANTIATE
-#undef INSTANTIATE_FUNCTION_TEMPLATES
+    #undef INSTANTIATE
+    #undef INSTANTIATE_FUNCTION_TEMPLATES
+}
