@@ -549,7 +549,7 @@ void TensorBase<T>::write_bin(string oname, string folder)
 template<class T>
 TensorBase<T> TensorBase<T>::transpose(const vector<unsigned> &axes)
 {
-    if(THROW_BASIC_EXCEPTIONS)
+    if(true && THROW_EXCEPTIONS)
     {
         set<unsigned> set1;
         for(unsigned n=0; n<shape.size(); n++)
@@ -577,23 +577,23 @@ TensorBase<T> TensorBase<T>::transpose(const vector<unsigned> &axes)
 
     vector<size_t> index(shape.size());
     vector<size_t> index2(shape2.size());
-
-    function<void(unsigned)> iterate = [&](unsigned dim)
+    
+    function<void(unsigned)> iterate = [&](unsigned dim2)
     {
-        index[dim]=0;
-        index2[axes[dim]]=0;
-        while(index[dim]<shape[dim])
+        index[axes[dim2]]=0;
+        index2[dim2]=0;
+        while(index2[dim2]<shape2[dim2])
         {
-            if( dim == shape.size()-1 )
+            if( dim2 == shape2.size()-1 )
             {
                 result(index2) = (*this)(index);
             }
             else
             {
-                iterate(dim+1);
+                iterate(dim2+1);
             }
-            index[dim]++;
-            index2[axes[dim]]++;
+            index[axes[dim2]]++;
+            index2[dim2]++;
         }
     };
     iterate(0);
