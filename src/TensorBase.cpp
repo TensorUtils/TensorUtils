@@ -549,7 +549,7 @@ void TensorBase<T>::write_bin(string oname, string folder)
 template<class T>
 TensorBase<T> TensorBase<T>::transpose(const vector<unsigned> &axes)
 {
-    if(true && THROW_EXCEPTIONS)
+    if(THROW_BASIC_EXCEPTIONS)
     {
         set<unsigned> set1;
         for(unsigned n=0; n<shape.size(); n++)
