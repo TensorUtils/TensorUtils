@@ -159,20 +159,47 @@ namespace TensorUtils
     INSTANTIATE_FUNCTION_TEMPLATES1(X,unsigned long long) \
     INSTANTIATE_FUNCTION_TEMPLATES1(X,long long) \
 
-    INSTANTIATE(double)
-    INSTANTIATE(float)
-    INSTANTIATE(long double)
-    INSTANTIATE(unsigned char)
-    INSTANTIATE(signed char)
-    INSTANTIATE(unsigned short)
-    INSTANTIATE(short)
-    INSTANTIATE(unsigned)
-    INSTANTIATE(int)
-    INSTANTIATE(unsigned long)
-    INSTANTIATE(long)
-    INSTANTIATE(unsigned long long)
-    INSTANTIATE(long long)
+    #define INSTANTIATE_FLOATING_POINT_TYPES(X) \
+    template class TensorDerived<X,-1>; \
+    template class TensorDerived<X,0>; \
+    template class TensorDerived<X,1>; \
+    template class TensorDerived<X,2>; \
+    template class TensorDerived<X,3>; \
+    template class TensorDerived<X,4>; \
+    template class TensorDerived<X,5>; \
+    template class TensorDerived<X,6>; \
+    template class TensorDerived<X,7>; \
+    template class TensorDerived<X,8>; \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,double) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,float) \
+    INSTANTIATE_FUNCTION_TEMPLATES1(X,long double) \
 
-    #undef INSTANTIATE
+    #ifndef ENABLE_INTEGRAL_TYPES
+    #define ENABLE_INTEGRAL_TYPES 1
+    #endif // ENABLE_INTEGRAL_TYPES
+
+    #if ENABLE_INTEGRAL_TYPES == 1
+        INSTANTIATE(double)
+        INSTANTIATE(float)
+        INSTANTIATE(long double)
+        INSTANTIATE(unsigned char)
+        INSTANTIATE(signed char)
+        INSTANTIATE(unsigned short)
+        INSTANTIATE(short)
+        INSTANTIATE(unsigned)
+        INSTANTIATE(int)
+        INSTANTIATE(unsigned long)
+        INSTANTIATE(long)
+        INSTANTIATE(unsigned long long)
+        INSTANTIATE(long long)
+    #else
+        INSTANTIATE_FLOATING_POINT_TYPES(double)
+        INSTANTIATE_FLOATING_POINT_TYPES(float)
+        INSTANTIATE_FLOATING_POINT_TYPES(long double)
+    #endif
+
+    #undef INSTANTIATE_FUNCTION_TEMPLATES1
     #undef INSTANTIATE_FUNCTION_TEMPLATES
+    #undef INSTANTIATE
+    #undef INSTANTIATE_FLOATING_POINT_TYPES
 }
